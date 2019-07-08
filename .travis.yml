@@ -1,0 +1,30 @@
+language: node_js
+
+node_js:
+  - 10.8
+
+addons:
+  apt:
+    packages:
+      - libgconf-2-4
+
+cache:
+  directories:
+    - ~/.npm
+    - ~/.cache
+  override:
+    - npm ci
+    - npm run cy:verify
+
+defaults: &defaults
+  script:
+    - $(npm bin)/print-env TRAVIS
+    - npm run cy:run -- --record --group $STAGE_NAME
+
+jobs:
+  include:
+    - stage: test
+      env:
+        - STAGE_NAME=1x-chrome
+        - CYPRESS_RECORD_KEY=a356e439-1fac-4f7d-9dad-97fc9c827a57
+      <<: *defaults
