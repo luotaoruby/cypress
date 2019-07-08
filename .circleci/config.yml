@@ -1,73 +1,45 @@
-version: 2.1
-orbs:
-  cypress: cypress-io/cypress@1.5.1
+defaults: &defaults
+  working_directory: ~/app
+  docker:
+    - image: cypress/browsers:chrome67
 
-executors:
-  linux-build:
+version: 2
+jobs:
+  build:
+    <<: *defaults
+    steps:
+      - checkout
+      - restore_cache:
+        keys:
+          - cache-{{ .Branch }}-{{ checksum "package.json" }}
+      - run:
+        name: Install Dependencies
+        command: npm ci
+      - run: npm run cy:verify
+      - save_cache:
+        key: cache-{{ .Branch }}-{{ checksum "package.json" }}
+        paths:
+          - ~/.npm
+          - ~/.cache
+      - persist_to_workspace:
+        root: ~/
+        paths:
+          - app
+          - .cache/Cypress
+  test_chorme:
+    <<: *defaults
     environment:
       CYPRESS_RECORD_KEY: 'a356e439-1fac-4f7d-9dad-97fc9c827a57'
-    
+    steps:
+      - attach_workspace:
+        at: ~/
+      - run: npm run e2e:record -- --group $CIRCLE_JOB --browser chorme
 
 workflows:
-  # mac-build:
-  #   jobs:
-  #     # split into install + test jobs when Mac caching is correct
-  #     # https://github.com/cypress-io/circleci-orb/issues/98
-  #     - cypress/run:
-  #         name: Mac test
-  #         executor: mac
-  #         # command: "npx cypress run --record --key a356e439-1fac-4f7d-9dad-97fc9c827a57 --group 'Mac build'"
-  #         # build: 'npm run build'
-  #         # start: 'npm run start:ci'
-  #         record: true
-  #         # key: 'a356e439-1fac-4f7d-9dad-97fc9c827a57'
-  #         group: 'Mac build'
-
-  linux-build:
+  version: 2
+  build_and_test:
     jobs:
-  #     # checks out code and installs dependencies once
-      - cypress/install:
-          name: 'Linux install'
-  #         # and builds the app using this command
-  #         build: 'npm run build'
-
-  #     # runs on 3 machines, load balances tests
-  #     # and records on Cypress Dashboard
-      - cypress/run:
-  #         # name this job because we are running "cypress/run" several times
-  #         # with different parameters
-          name: 'Linux build'
-  #         # job will use workspace with code and dependencies
-  #         # installed by the "install" job
-  #         requires:
-  #           - Linux install
-          record: true # record results on Cypress dashboard
-  #         parallel: true # load balance all tests
-  #         parallelism: 3 # across 3 machines
-          group: 'Linux build' # name this group
-  #         start: 'npm run start:ci' # start server before running tests
-
-  #     # run on 2 machines using Chrome browser
-  #     - cypress/run:
-  #         name: '2 machines using Chrome'
-  #         # job will use workspace with code and dependencies
-  #         # installed by the "install" job
-  #         requires:
-  #           - Linux install
-  #         # use executor with Chrome installed
-  #         executor: cypress/browsers-chrome69
-  #         # use browser "chrome" for running tests
-  #         browser: chrome
-  #         record: true
-  #         parallel: true
-  #         parallelism: 2
-  #         group: '2x-chrome'
-  #         start: 'npm run start:ci'
-
-  #     - release:
-  #         filters:
-  #           branches:
-  #             only:
-  #               - master
-  #         requires:
-  #           - 3 machines
+      - build
+      - test_chorme:
+        requires:
+          - build
