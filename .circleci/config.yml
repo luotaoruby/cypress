@@ -15,11 +15,12 @@ workflows:
       - cypress/run:
           name: Mac test
           executor: mac
+          command: "npx cypress run --record --key a356e439-1fac-4f7d-9dad-97fc9c827a57 --group 'Mac build'"
           # build: 'npm run build'
           # start: 'npm run start:ci'
-          record: true
-          key: 'a356e439-1fac-4f7d-9dad-97fc9c827a57'
-          group: 'Mac build'
+          # record: true
+          # key: 'a356e439-1fac-4f7d-9dad-97fc9c827a57'
+          # group: 'Mac build'
 
   # linux-build:
   #   jobs:
