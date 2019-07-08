@@ -15,8 +15,8 @@ workflows:
       - cypress/run:
           name: Mac test
           executor: mac
-          build: 'npm run build'
-          start: 'npm run start:ci'
+          # build: 'npm run build'
+          # start: 'npm run start:ci'
           record: true
           group: 'Mac build'
 
