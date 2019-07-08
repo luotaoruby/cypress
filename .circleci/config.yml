@@ -18,6 +18,7 @@ workflows:
           # build: 'npm run build'
           # start: 'npm run start:ci'
           record: true
+          key: '0d13fb7f-0077-4c2f-9a5f-aac67e1b0512'
           group: 'Mac build'
 
   # linux-build:
