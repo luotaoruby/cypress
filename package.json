@@ -1,0 +1,15 @@
+{
+  "name": "consumersadvocate",
+  "version": "1.0.0",
+  "description": "#Installations -",
+  "main": "index.js",
+  "scripts": {
+    "cypress:open": "cypress open"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "cypress": "^3.3.2",
+    "eslint": "^5.16.0"
+  }
+}
