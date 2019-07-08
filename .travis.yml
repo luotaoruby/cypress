@@ -18,7 +18,7 @@ cache:
 
 defaults: &defaults
   script:
-    - $(npm bin)/print-env TRAVIS
+    # - $(npm bin)/print-env TRAVIS
     - npm run cy:run -- --record --group $STAGE_NAME
 
 jobs:
